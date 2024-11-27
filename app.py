@@ -1,9 +1,4 @@
-print("Starting the server")
-from gevent.pywsgi import WSGIServer
-from geventwebsocket.handler import WebSocketHandler
-
-
-from flask import Flask, render_template
+from flask import Flask, render_template_string
 from flask_socketio import SocketIO, send
 
 app = Flask(__name__)
@@ -13,6 +8,33 @@ socketio = SocketIO(app)
 @app.route('/')
 def index():
     return "Hello world"
+
+@app.route('/socket')
+def socket():
+    return render_template_string('''
+        <!DOCTYPE html>
+        <html>
+        <head>
+            <title>SocketIO Test</title>
+            <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/4.0.1/socket.io.js"></script>
+            <script type="text/javascript" charset="utf-8">
+                document.addEventListener('DOMContentLoaded', function() {
+                    var socket = io.connect('http://' + document.domain + ':' + location.port);
+                    socket.on('connect', function() {
+                        console.log('Connected to server');
+                        socket.send('Hello Server!');
+                    });
+                    socket.on('message', function(msg) {
+                        console.log('Received message: ' + msg);
+                    });
+                });
+            </script>
+        </head>
+        <body>
+            <h1>SocketIO Test</h1>
+        </body>
+        </html>
+    ''')
 
 @socketio.on('message')
 def handle_message(msg):
@@ -29,6 +51,5 @@ def handle_disconnect():
     print('Client disconnected')
         
 if __name__ == '__main__':
-    print("Running in production mode")
-    http_server = WSGIServer(('0.0.0.0', 5000), app, handler_class=WebSocketHandler)
-    http_server.serve_forever()
+    print("Running the app")
+    app.run(debug=False, host="0.0.0.0", port=5000)

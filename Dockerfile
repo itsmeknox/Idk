@@ -1,20 +1,16 @@
-# Use the official Python image from the Docker Hub
-FROM python:3.9
+FROM python
 
-# Set the working directory in the container
+# Définir le répertoire de travail dans le conteneur
 WORKDIR /app
 
-# Copy the current directory contents into the container at /app
-COPY . /app
+# Copier le fichier requirements.txt dans le conteneur
+COPY requirements.txt /app/
 
-# Install any needed packages specified in requirements.txt
+# Installer les dépendances à partir du fichier requirements.txt
 RUN pip install --no-cache-dir -r requirements.txt
 
-# Make port 5000 available to the world outside this container
-EXPOSE 5000
+# Copier le reste de l'application dans le conteneur
+COPY . /app
 
-# Define environment variable
-ENV FLASK_APP=app.py
-
-# Run app.py when the container launches
-CMD ["python", "app.py"]
+# Exécuter l'application avec Gunicorn pour la production
+CMD ["gunicorn", "-b", "0.0.0.0:5000", "app:app"]
