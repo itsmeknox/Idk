@@ -1,3 +1,4 @@
+print("Starting the server")
 from gevent.pywsgi import WSGIServer
 from geventwebsocket.handler import WebSocketHandler
 
