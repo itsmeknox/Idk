@@ -1,3 +1,7 @@
+from gevent.pywsgi import WSGIServer
+from geventwebsocket.handler import WebSocketHandler
+
+
 from flask import Flask, render_template
 from flask_socketio import SocketIO, send
 
@@ -24,5 +28,6 @@ def handle_disconnect():
     print('Client disconnected')
         
 if __name__ == '__main__':
-    socketio.run(app, host='0.0.0.0', port=5000, debug=False)
-    print('Server running on http://localhost:5000/')
+    print("Running in production mode")
+    http_server = WSGIServer(('0.0.0.0', 5000), app, handler_class=WebSocketHandler)
+    http_server.serve_forever()
