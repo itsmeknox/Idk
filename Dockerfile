@@ -1,4 +1,3 @@
-
 # Use the official Python image from the Docker Hub
 FROM python:3.9-slim
 
@@ -18,4 +17,4 @@ EXPOSE 5000
 ENV FLASK_APP=app.py
 
 # Run app.py when the container launches
-CMD ["py", "app.py"]
+CMD ["python", "app.py"]
