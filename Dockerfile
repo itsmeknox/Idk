@@ -1,16 +1,17 @@
-FROM python
+# Use an official Python runtime as a parent image
+FROM python:3.9
 
-# Définir le répertoire de travail dans le conteneur
-WORKDIR /app
+# Set the working directory in the container
+WORKDIR /usr/src/app
 
-# Copier le fichier requirements.txt dans le conteneur
-COPY requirements.txt /app/
+# Copy the current directory contents into the container at /usr/src/app
+COPY . .
 
-# Installer les dépendances à partir du fichier requirements.txt
+# Install any needed packages specified in requirements.txt
 RUN pip install --no-cache-dir -r requirements.txt
 
-# Copier le reste de l'application dans le conteneur
-COPY . /app
+# Make port 5000 available to the world outside this container
+EXPOSE 5000
 
-# Exécuter l'application avec Gunicorn pour la production
-CMD ["gunicorn", "-b", "0.0.0.0:5000", "app:app"]
+# Run the app with gunicorn and eventlet
+CMD ["python", "app.py"]
